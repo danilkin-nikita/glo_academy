@@ -54,14 +54,16 @@ let appData = {
   },
   getBudget: function() {
     
-    appData.budgetMonth = appData.budget - appData.getExpensesMonth();
+    appData.budgetMonth = appData.budget - appData.expensesMonth;
     appData.budgetDay = appData.budgetMonth / 30;
   
   },
   getTargetMonth: function() {
-    if (appData.mission / appData.budgetMonth > 0) {
-      return ('Цель будет достигнута');
+    appData.period = appData.mission / appData.budgetMonth;
+    if (appData.period > 0) {
+      return (`Цель будет достигнута за ${Math.floor(appData.period)} месяца`);
     } else return ('Цель не будет достигнута');
+
   },
   getStatusIncome: function() {
     if (appData.budgetDay > 1200 ){
@@ -75,14 +77,16 @@ let appData = {
 };
 
 appData.asking();
+appData.getExpensesMonth();
+appData.getBudget();
+appData.getTargetMonth();
+appData.getStatusIncome();
 
-console.log('Расходы за месяц:', appData.getExpensesMonth());
-console.log('Бюджет на месяц', appData.budgetMonth);
+console.log(`Расходы на месяц: ${appData.expensesMonth}`);
 console.log(appData.getTargetMonth());
-console.log('Бюджет на день', Math.floor(appData.budgetDay));
 console.log(appData.getStatusIncome());
 
 console.log('Наша программа включает в себя данные:');
 for (let key in appData){
-  console.log(key + appData[key]);
+  console.log('Ключ: ' + key + ' Значение: ' + appData[key]);
 }
