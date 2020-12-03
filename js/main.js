@@ -1,16 +1,16 @@
 'use strict';
 
-let isNumber = function(n) {
+const isNumber = function(n) {
   return !isNaN(parseFloat(n)) && isFinite(n)
 };
 
-let isString = function(n) {
+const isString = function(n) {
   return isNaN(n)
 };
 
 let money;
 
-let start = function() {
+const start = function() {
   do {
     money = prompt('Ваш месячный доход?', 25000);
   }
@@ -51,7 +51,7 @@ let appData = {
 
     let addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую', 'Налоги, продукты, такси');
         appData.addExpenses = addExpenses.toLowerCase().split(', ');
-        appData.deposit = confirm('Есть ли у вас депозит в банке?');
+       
     for (let i = 0; i < 2; i++) {
 
      let itemExpenses = prompt('Введите обязательную статью расходов?', 'Такси');
@@ -68,6 +68,8 @@ let appData = {
      appData.expenses[itemExpenses] = cashExpenses;
      
     }
+
+    appData.deposit = confirm('Есть ли у вас депозит в банке?');
   },
   getExpensesMonth: function() {
 
@@ -99,9 +101,9 @@ let appData = {
   },
   getInfoDeposit: function() {
     if (appData.deposit) {
-      appData.percentDeposit = prompt('Какой годовой процент', 10);
+      appData.percentDeposit = prompt('Какой годовой процент?', 10);
       while (!isNumber(appData.percentDeposit)) {
-        appData.percentDeposit = prompt('Какой годовой процент', 10);
+        appData.percentDeposit = prompt('Какой годовой процент?', 10);
       }
 
       appData.moneyDeposit = prompt('Какая сумма заложена?', 10000);
@@ -119,6 +121,7 @@ let appData = {
 appData.asking();
 appData.getExpensesMonth();
 appData.getBudget();
+appData.getInfoDeposit();
 
 console.log(`Расходы на месяц: ${appData.expensesMonth}`);
 console.log(appData.getTargetMonth());
