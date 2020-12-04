@@ -38,6 +38,8 @@ let appData = {
   moneyDeposit: 0,
   start: function() {
 
+    appData.budget = +salaryAmount.value;
+
     appData.getExpenses();
     appData.getIncome();
     appData.getExpensesMonth();
@@ -63,6 +65,7 @@ let appData = {
     additionalIncomeValue.value = appData.addIncome.join(', ');
     targetMonthValue.value = Math.ceil(appData.getTargetMonth());
     incomePeriodValue.value = appData.calcPeriod();
+    periodSelect.addEventListener('input', appData.dynamicCalcPeriod);
   },
   addExpensesBlock: function() {
     let cloneExpensesItem = expensesItems[0].cloneNode(true);
@@ -161,11 +164,15 @@ let appData = {
   },
   calcPeriod: function() {
     return appData.budgetMonth * periodSelect.value;
+  },
+  dynamicCalcPeriod: function() {
+    incomePeriodValue.value = appData.calcPeriod();
+  },
+  checkPeriod: function() {
+    periodAmount.innerHTML = periodSelect.value;
   }
 };
-periodSelect.oninput = function() {
-  periodAmount.innerHTML = periodSelect.value;
-};
+periodSelect.addEventListener('input', appData.checkPeriod);
 start.disabled = true;
 start.addEventListener('click', appData.start);
 salaryAmount.addEventListener('input', appData.check);
