@@ -8,16 +8,16 @@ const todoControl = document.querySelector('.todo-control'),
 let todoData = [];
 
 const loadingFromLocalStorage = function() {
-  if (todoData === []) {
-    return;
+  if (localStorage.getItem('todoData') == null) {
+    localStorage.setItem('todoData', JSON.stringify(todoData));
   } else {
     todoData = JSON.parse(localStorage.getItem('todoData'));
   }
-}
+};
 
 const conversionJson = function() {      
   localStorage.setItem('todoData', JSON.stringify(todoData));
-}
+};
 
 const render = function() {
   todoList.textContent = '';
