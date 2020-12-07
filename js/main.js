@@ -133,6 +133,8 @@ let appData = {
     cloneExpensesItem.querySelectorAll('input').forEach(function(item) {
       item.value = '';
     });
+    this.checkForNumber();
+    this.checkForString();
   },
   getExpenses: function() {
     expensesItems.forEach(function(item) {
@@ -159,6 +161,8 @@ let appData = {
     cloneIncomeItem.querySelectorAll('input').forEach(function(item) {
       item.value = '';
     });
+    this.checkForNumber();
+    this.checkForString();
   },
   getIncome: function() {
     incomeItems.forEach(function(item) {
