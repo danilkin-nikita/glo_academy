@@ -89,6 +89,8 @@ let appData = {
     cancel.style.display = 'none';
     depositCheck.checked = false;
     depositCheck.disabled = false;
+    periodSelect.value = 1;
+    periodAmount.innerHTML = periodSelect.value;
 
     this.deleteIncomeBlock();
     this.deleteExpensesBlock();
