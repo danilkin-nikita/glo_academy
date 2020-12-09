@@ -1,15 +1,23 @@
 'use strict';
 
-let btnNewColor = document.getElementById('change'),
-    color = document.getElementById('color');
+class First {
+  hello() {
+    console.log('Привет, я метод родителя!');
+  }
+  
+}
 
-let randomize = function() {
- let randomColor = '#' + (Math.random().toString(16)).substring(2,8).toUpperCase();
- btnNewColor.style.color = randomColor;
-  document.body.style.background = randomColor;
-  color.innerText = randomColor;
-};
+const first = new First();
 
-btnNewColor.addEventListener('click', randomize);
+first.hello();
 
-randomize();
+class Second extends First {
+  hello() {
+    super.hello();
+    console.log('А я наследуемый метод!');
+  }
+}
+
+const second = new Second();
+
+second.hello();
