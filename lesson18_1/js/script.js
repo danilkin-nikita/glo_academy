@@ -43,8 +43,9 @@ window.addEventListener('DOMContentLoaded', function() {
         clearInterval(start);
       }
     }
+    updateClock();
   }
 
-  countTimer('15 December 2020');
+  countTimer('16 December 2020');
 
 });
