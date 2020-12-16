@@ -76,11 +76,9 @@ window.addEventListener('DOMContentLoaded', () => {
             const timer = setInterval(() => {
                 const timePassad = Date.now() - start;
                 elem.style.display = 'block';
-                if (elem.style.opacity !== 0) {
-                    elem.style.opacity = timePassad / 3 + '%';
-                    if (elem.style.opacity >= 1) {
-                        clearInterval(timer);
-                    }
+                elem.style.opacity = timePassad / 3 + '%';
+                if (elem.style.opacity >= 1) {
+                    clearInterval(timer);
                 }
             });
         };
@@ -91,6 +89,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     fade(popup);
                 } else {
                     popup.style.display = 'block';
+                    elem.style.opacity = 0;
                 }
             });
         });
