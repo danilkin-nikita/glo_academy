@@ -46,21 +46,54 @@ window.addEventListener('DOMContentLoaded', () => {
 
     countTimer('17 December 2020');
 
+    //Плавный скролл
+    const moveToAnchor = item => {
+
+        const blockID = item.getAttribute('href').substr(1);
+
+        document.getElementById(blockID).scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    };
+
     // Меню
     const toggleMenu = () => {
-        const btnMenu = document.querySelector('.menu'),
-            menu = document.querySelector('menu'),
-            closeBtn = document.querySelector('.close-btn'),
-            menuItems = menu.querySelectorAll('ul>li');
+        const menu = document.querySelector('menu'),
+            menuItems = menu.querySelectorAll('ul>li>a'),
+            anchorToService = document.querySelector('a[href$="service-block"]');
 
         const handlerMenu = () => {
             menu.classList.toggle('active-menu');
         };
 
-        btnMenu.addEventListener('click', handlerMenu);
-        closeBtn.addEventListener('click', handlerMenu);
-        menuItems.forEach(elem => elem.addEventListener('click', handlerMenu));
+        document.addEventListener('click', event => {
+            const target = event.target;
+            event.preventDefault();
 
+            if (menu.classList.contains('active-menu')) {
+                if (!target.closest('.active-menu') || target.classList.contains('close-btn')) {
+                    handlerMenu();
+                }
+
+                if (target) {
+                    menuItems.forEach(item => {
+                        if (target === item) {
+                            moveToAnchor(item);
+                            handlerMenu();
+                        }
+                    });
+                }
+            }
+
+            if (target.closest('.menu')) {
+                handlerMenu();
+            }
+
+            if (target.closest('a[href$="service-block"]')) {
+                moveToAnchor(anchorToService);
+            }
+        });
     };
 
     toggleMenu();
@@ -68,8 +101,7 @@ window.addEventListener('DOMContentLoaded', () => {
     //popup
     const togglePopUp = () => {
         const popup = document.querySelector('.popup'),
-            popupBtn = document.querySelectorAll('.popup-btn'),
-            popupClose = document.querySelector('.popup-close');
+            popupBtn = document.querySelectorAll('.popup-btn');
 
         const fade = elem => {
             const start = Date.now();
@@ -89,38 +121,59 @@ window.addEventListener('DOMContentLoaded', () => {
                     fade(popup);
                 } else {
                     popup.style.display = 'block';
-                    elem.style.opacity = 0;
                 }
             });
         });
 
-        popupClose.addEventListener('click', () => {
-            popup.style.display = 'none';
-            popup.style.opacity = '';
+        popup.addEventListener('click', event => {
+            let target = event.target;
+
+            if (target.classList.contains('popup-close')) {
+                popup.style.display = 'none';
+            } else {
+                target = target.closest('.popup-content');
+
+                if (!target) {
+                    popup.style.display = 'none';
+                }
+            }
         });
     };
 
     togglePopUp();
 
-    //Плавный скролл
-    const smoothScroll = () => {
-        const menuItems = document.querySelectorAll('a[href*="#"]');
+    //табы
+    const tabs = () => {
+        const tabHeader = document.querySelector('.service-header'),
+            tab = tabHeader.querySelectorAll('.service-header-tab'),
+            tabContent = document.querySelectorAll('.service-tab');
 
-        const moveToAnchor = item => {
-            item.forEach(elem => {
-                elem.addEventListener('click', event => {
-                    event.preventDefault();
-
-                    const blockID = elem.getAttribute('href').substr(1);
-
-                    document.getElementById(blockID).scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                });
-            });
+        const toggleTabContent = index => {
+            for (let i = 0; i < tabContent.length; i++) {
+                if (index === i) {
+                    tab[i].classList.add('active');
+                    tabContent[i].classList.remove('d-none');
+                } else {
+                    tab[i].classList.remove('active');
+                    tabContent[i].classList.add('d-none');
+                }
+            }
         };
-        moveToAnchor(menuItems);
+
+        tabHeader.addEventListener('click', event => {
+            let target = event.target;
+            target = target.closest('.service-header-tab');
+
+            if (target) {
+                tab.forEach((item, i) => {
+                    if (item === target) {
+                        toggleTabContent(i);
+                    }
+                });
+            }
+        });
     };
-    smoothScroll();
+
+    tabs();
+
 });
