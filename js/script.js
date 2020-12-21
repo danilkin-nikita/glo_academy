@@ -269,4 +269,45 @@ window.addEventListener('DOMContentLoaded', () => {
 
     slider();
 
+    //Изменение img
+    const changeImg = () => {
+        const imgContainer = document.querySelector('.command');
+
+        imgContainer.addEventListener('mouseover', event => {
+            let target = event.target;
+
+            if (target.closest('.command__photo')) {
+                
+                target.src = target.dataset.img;
+                fade(target);
+            }
+        });
+
+        imgContainer.addEventListener('mouseout', event => {
+            let target = event.target;
+
+            if (target.closest('.command__photo')) {
+                target.src = target.src.replace(/([0-9])[a-z]/g, (match, val1) => val1);
+                fade(target);
+            }
+        });
+    };
+
+    changeImg();
+
+    //проверка на число
+    const checkForNumber = () => {
+        const calc = document.querySelector('.calc');
+
+        calc.addEventListener('input', event => {
+            let target = event.target;
+
+            if (target.closest('.calc-count, .calc-day, .calc-square')) {
+                target.value = target.value.replace(/\D/g, "");
+            }
+        });
+    };
+
+    checkForNumber();
+
 });
