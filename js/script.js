@@ -57,6 +57,35 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // анимация счетчика
+    const counterAnimation = (num, elem) => {
+        const time = 10;
+
+        let step = 100,
+            count = 0;
+
+        if (num > 10000 && num <= 30000) {
+            step = 200;
+        } else if (num > 30000 && num <= 60000) {
+            step = 300;
+        } else if (num > 60000 && num <= 100000) {
+            step = 400;
+        } else if (num > 100000) {
+            step = 500;
+        }
+
+        const speed = Math.round(time / (num / step));
+
+        const interval = setInterval(() => {
+            if (count < num) {
+                count += step;
+                elem.textContent = count;
+            } else if (count === num || num === 0) {
+                clearInterval(interval);
+            }
+        }, speed);
+    };
+
     // анимация появления
     const fade = (elem, num = 3) => {
         const start = Date.now();
@@ -67,7 +96,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 clearInterval(timer);
             }
         });
-        };  
+    };
 
     // Меню
     const toggleMenu = () => {
@@ -81,7 +110,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         document.addEventListener('click', event => {
             event.preventDefault();
-            let target = event.target;
+            const target = event.target;
 
             if (menu.classList.contains('active-menu')) {
                 if (!target.closest('.active-menu') || target.classList.contains('close-btn')) {
@@ -93,7 +122,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             handlerMenu();
                         }
                     });
-                }      
+                }
             } else if (target.closest('.menu')) {
                 handlerMenu();
             } else if (target.closest('a[href$="service-block"]')) {
@@ -178,17 +207,17 @@ window.addEventListener('DOMContentLoaded', () => {
             slider = document.querySelector('.portfolio-content');
 
         let currentSlide = 0,
-            interval;  
+            interval;
 
         for (let i = 0; i < slide.length; i++) {
-            let dots = document.createElement('li');
+            const dots = document.createElement('li');
             dots.className = 'dot';
-            portfolioDots.append(dots);  
+            portfolioDots.append(dots);
         }
-        
-        let dot = document.querySelectorAll('.dot');
+
+        const dot = document.querySelectorAll('.dot');
         dot[0].className = 'dot dot-active';
-        
+
 
         const prevSlide = (elem, index, strClass) => {
             elem[index].classList.remove(strClass);
@@ -210,17 +239,17 @@ window.addEventListener('DOMContentLoaded', () => {
         };
 
         const startSlide = (time = 3000) => {
-           interval = setInterval(autoPlaySlide, time);
+            interval = setInterval(autoPlaySlide, time);
         };
 
         const stopSlide = () => {
             clearInterval(interval);
         };
 
-        slider.addEventListener('click', (event) => {
+        slider.addEventListener('click', event => {
             event.preventDefault();
 
-            let target = event.target;
+            const target = event.target;
 
             if (!target.matches('.portfolio-btn, .dot')) {
                 return;
@@ -251,13 +280,13 @@ window.addEventListener('DOMContentLoaded', () => {
             nextSlide(dot, currentSlide, 'dot-active');
         });
 
-        slider.addEventListener('mouseover', (event) => {
+        slider.addEventListener('mouseover', event => {
             if (event.target.matches('.portfolio-btn') || event.target.matches('.dot')) {
                 stopSlide();
             }
         });
 
-        slider.addEventListener('mouseout', (event) => {
+        slider.addEventListener('mouseout', event => {
             if (event.target.matches('.portfolio-btn') || event.target.matches('.dot')) {
                 startSlide();
             }
@@ -272,22 +301,23 @@ window.addEventListener('DOMContentLoaded', () => {
     //Изменение img
     const changeImg = () => {
         const imgContainer = document.querySelector('.command');
+        let imgSrc;
 
         imgContainer.addEventListener('mouseover', event => {
-            let target = event.target;
+            const target = event.target;
 
             if (target.closest('.command__photo')) {
-                
+                imgSrc = target.src;
                 target.src = target.dataset.img;
                 fade(target);
             }
         });
 
         imgContainer.addEventListener('mouseout', event => {
-            let target = event.target;
+            const target = event.target;
 
             if (target.closest('.command__photo')) {
-                target.src = target.src.replace(/([0-9])[a-z]/g, (match, val1) => val1);
+                target.src = imgSrc;
                 fade(target);
             }
         });
@@ -295,19 +325,58 @@ window.addEventListener('DOMContentLoaded', () => {
 
     changeImg();
 
-    //проверка на число
-    const checkForNumber = () => {
-        const calc = document.querySelector('.calc');
+    //калькулятор
+    const calc = (price = 100) => {
+        const calcBlock = document.querySelector('.calc-block'),
+            calcType = document.querySelector('.calc-type'),
+            calcSquare = document.querySelector('.calc-square'),
+            calcDay = document.querySelector('.calc-day'),
+            calcCount = document.querySelector('.calc-count'),
+            totalValue = document.getElementById('total');
 
-        calc.addEventListener('input', event => {
-            let target = event.target;
 
-            if (target.closest('.calc-count, .calc-day, .calc-square')) {
+        const countSum = () => {
+            let total = 0,
+                countValue = 1,
+                dayValue = 1;
+            const typeValue = calcType.options[calcType.selectedIndex].value,
+                squareValue = +calcSquare.value;
+
+            if (calcCount.value > 1) {
+                countValue += (calcCount.value - 1) / 10;
+            }
+
+            if (calcDay.value && calcDay.value < 5) {
+                dayValue *= 2;
+            } else if (calcDay.value && calcDay.value < 10) {
+                dayValue *= 1.5;
+            }
+
+            if (typeValue && squareValue) {
+                total = price * typeValue * squareValue * countValue * dayValue;
+            }
+
+            counterAnimation(total, totalValue);
+        };
+
+        calcBlock.addEventListener('change', event => {
+            const target = event.target;
+
+            if (target === calcType || target === calcSquare || target === calcDay || target === calcCount) {
+
+                countSum();
+            }
+        });
+
+        calcBlock.addEventListener('input', event => {
+            const target = event.target;
+
+            if (target === calcSquare || target === calcDay || target === calcCount) {
                 target.value = target.value.replace(/\D/g, "");
             }
         });
     };
 
-    checkForNumber();
+    calc();
 
 });
