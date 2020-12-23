@@ -58,32 +58,29 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     // анимация счетчика
-    const counterAnimation = (num, elem) => {
-        const time = 10;
+    const counterAnimation = (num, elem, interval) => {
+        let time = 10;
 
         let step = 100,
             count = 0;
 
         if (num > 10000 && num <= 30000) {
-            step = 200;
-        } else if (num > 30000 && num <= 60000) {
-            step = 300;
-        } else if (num > 60000 && num <= 100000) {
-            step = 400;
+            time = 20;
+        } else if (num > 30000 && num <= 100000) {
+            time = 60;
         } else if (num > 100000) {
-            step = 500;
+            time = 100;
         }
-
+       
         const speed = Math.round(time / (num / step));
 
-        const interval = setInterval(() => {
+        interval = setInterval(() => {
             if (count < num) {
                 count += step;
                 elem.textContent = count;
-            } else if (count === num || num === 0) {
-                clearInterval(interval);
             }
         }, speed);
+        
     };
 
     // анимация появления
@@ -334,11 +331,11 @@ window.addEventListener('DOMContentLoaded', () => {
             calcCount = document.querySelector('.calc-count'),
             totalValue = document.getElementById('total');
 
-
         const countSum = () => {
             let total = 0,
                 countValue = 1,
-                dayValue = 1;
+                dayValue = 1,
+                start;
             const typeValue = calcType.options[calcType.selectedIndex].value,
                 squareValue = +calcSquare.value;
 
@@ -355,8 +352,8 @@ window.addEventListener('DOMContentLoaded', () => {
             if (typeValue && squareValue) {
                 total = price * typeValue * squareValue * countValue * dayValue;
             }
-
-            counterAnimation(total, totalValue);
+    
+            counterAnimation(total, totalValue, start);
         };
 
         calcBlock.addEventListener('change', event => {
