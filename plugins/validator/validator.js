@@ -110,7 +110,28 @@ class Validator {
   }
 }
 
- const valid = new Validator({
+const validForm1 = new Validator({
+    selector: '#form1',
+    pattern: {
+      text: /^[а-я]+$/msi
+    },
+     method: {
+      'form1-phone': [
+        ['notEmpty'],
+        ['pattern', 'phone']
+      ],
+      'form1-email': [
+        ['notEmpty'],
+        ['pattern', 'email']
+      ],
+      'form1-name': [
+        ['notEmpty'],
+        ['pattern', 'text']
+      ]
+    }
+  });
+
+ const validForm2 = new Validator({
     selector: '#form2',
     pattern: {
       text: /^[а-я]+$/msi
@@ -135,4 +156,27 @@ class Validator {
     }
   });
 
-  valid.init();
+  const validForm3 = new Validator({
+    selector: '#form3',
+    pattern: {
+      text: /^[а-я]+$/msi
+    },
+     method: {
+      'form3-phone': [
+        ['notEmpty'],
+        ['pattern', 'phone']
+      ],
+      'form3-email': [
+        ['notEmpty'],
+        ['pattern', 'email']
+      ],
+      'form3-name': [
+        ['notEmpty'],
+        ['pattern', 'text']
+      ]
+    }
+  });
+
+  validForm1.init();
+  validForm2.init();
+  validForm3.init()
