@@ -44,7 +44,7 @@ window.addEventListener('DOMContentLoaded', () => {
         updateClock();
     };
 
-    countTimer('18 December 2020');
+    countTimer('26 December 2020');
 
     //Плавный скролл
     const moveToAnchor = item => {
@@ -71,7 +71,7 @@ window.addEventListener('DOMContentLoaded', () => {
         } else if (num > 100000) {
             time = 100;
         }
-       
+
         const speed = Math.round(time / (num / step));
 
         interval = setInterval(() => {
@@ -80,7 +80,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 elem.textContent = count;
             }
         }, speed);
-        
+
     };
 
     // анимация появления
@@ -106,7 +106,6 @@ window.addEventListener('DOMContentLoaded', () => {
         };
 
         document.addEventListener('click', event => {
-            event.preventDefault();
             const target = event.target;
 
             if (menu.classList.contains('active-menu')) {
@@ -115,6 +114,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 } else if (target) {
                     menuItems.forEach(item => {
                         if (target === item) {
+                            event.preventDefault();
                             moveToAnchor(item);
                             handlerMenu();
                         }
@@ -123,6 +123,7 @@ window.addEventListener('DOMContentLoaded', () => {
             } else if (target.closest('.menu')) {
                 handlerMenu();
             } else if (target.closest('a[href$="service-block"]')) {
+                event.preventDefault();
                 moveToAnchor(anchorToService);
             }
         });
@@ -352,7 +353,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if (typeValue && squareValue) {
                 total = price * typeValue * squareValue * countValue * dayValue;
             }
-    
+
             counterAnimation(total, totalValue, start);
         };
 
@@ -376,4 +377,80 @@ window.addEventListener('DOMContentLoaded', () => {
 
     calc();
 
+    //send-ajax=form
+    const sendForm = () => {
+        const errorMessage = 'Что-то пошло не так...',
+            successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
+
+        const form = document.querySelectorAll('form');
+
+        form.forEach(item => {
+            const statusMessage = document.createElement('div');
+            statusMessage.style.cssText = 'font-size: 2rem;';
+            statusMessage.style.color = '#fff';
+
+            item.addEventListener('submit', event => {
+                event.preventDefault();
+                item.appendChild(statusMessage);
+                statusMessage.innerHTML = `<img src="./images/loading.svg">`;
+
+                const formData = new FormData(item);
+                const body = {};
+
+                item.reset();
+
+                formData.forEach((val, key) => {
+                    body[key] = val;
+                });
+
+                postData(body, () => {
+                    statusMessage.textContent = successMessage;
+                }, error => {
+                    statusMessage.textContent = errorMessage;
+                    console.error(error);
+                });
+            });
+
+            item.addEventListener('input', event => {
+                let target = event.target;
+
+                if (target.matches('input[name="user_name"]')) {
+                    target.value = target.value.replace(/[^а-я ]$/msi, '');
+                }
+                if (target.matches('input[name="user_message"]')) {
+                    target.value = target.value.replace(/^[a-z]$/msi, '');
+                }
+                if (target.matches('input[name="user_phone"]')) {
+                    target.value = target.value.replace(/[^+0-9]$/, '');
+                }
+                 if (target.matches('input[name="user_email"]')) {
+                    target.value = target.value.replace(/^[а-я]$/, '');
+                }
+            });
+        });
+
+        const postData = (body, outputData, errorData) => {
+            const request = new XMLHttpRequest();
+
+            request.addEventListener('readystatechange', () => {
+
+                if (request.readyState !== 4) {
+                    return;
+                }
+                if (request.status === 200) {
+                    outputData();
+                } else {
+                    errorData(request.status);
+                }
+            });
+
+            request.open('POST', './server.php');
+            request.setRequestHeader('Content-Type', 'multipart/aplication/json');
+
+            request.send(JSON.stringify(body));
+        };
+
+    };
+
+    sendForm();
 });

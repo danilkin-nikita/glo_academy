@@ -20,7 +20,7 @@ class Validator {
       if (this.error.size) {
         event.preventDefault();
       }
-    })
+    });
   }
 
   isValid(elem) {
@@ -179,4 +179,4 @@ const validForm1 = new Validator({
 
   validForm1.init();
   validForm2.init();
-  validForm3.init()
+  validForm3.init();
