@@ -381,23 +381,28 @@ window.addEventListener('DOMContentLoaded', () => {
     const sendForm = () => {
         const errorMessage = 'Что-то пошло не так...',
             successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
+        
+        const statusMessage = document.createElement('div');
+        statusMessage.style.cssText = 'font-size: 2rem;';
+        statusMessage.style.color = '#fff';
 
-        const form = document.querySelectorAll('form');
+        document.querySelectorAll('input[name="user_email"]').forEach((item) => {
+            item.required = true;
+        })
 
-        form.forEach(item => {
-            const statusMessage = document.createElement('div');
-            statusMessage.style.cssText = 'font-size: 2rem;';
-            statusMessage.style.color = '#fff';
+        document.addEventListener('submit', event => {
+            event.preventDefault();
+            let target = event.target;
 
-            item.addEventListener('submit', event => {
-                event.preventDefault();
-                item.appendChild(statusMessage);
+            if (target.matches('form')) {
+
+                target.appendChild(statusMessage);
                 statusMessage.innerHTML = `<img src="./images/loading.svg">`;
 
-                const formData = new FormData(item);
+                const formData = new FormData(target);
                 const body = {};
 
-                item.reset();
+                target.reset();
 
                 formData.forEach((val, key) => {
                     body[key] = val;
@@ -409,24 +414,24 @@ window.addEventListener('DOMContentLoaded', () => {
                     statusMessage.textContent = errorMessage;
                     console.error(error);
                 });
-            });
+            }
+        });
 
-            item.addEventListener('input', event => {
-                let target = event.target;
+        document.addEventListener('input', event => {
+            let target = event.target;
 
-                if (target.matches('input[name="user_name"]')) {
-                    target.value = target.value.replace(/[^а-я ]$/msi, '');
-                }
-                if (target.matches('input[name="user_message"]')) {
-                    target.value = target.value.replace(/^[a-z]$/msi, '');
-                }
-                if (target.matches('input[name="user_phone"]')) {
-                    target.value = target.value.replace(/[^+0-9]$/, '');
-                }
-                 if (target.matches('input[name="user_email"]')) {
-                    target.value = target.value.replace(/^[а-я]$/, '');
-                }
-            });
+            if (target.matches('input[name="user_name"]')) {
+                target.value = target.value.replace(/[^а-я ]$/msi, '');
+            }
+            if (target.matches('input[name="user_message"]')) {
+                target.value = target.value.replace(/^[a-z]$/msi, '');
+            }
+            if (target.matches('input[name="user_phone"]')) {
+                target.value = target.value.replace(/[^+0-9]$/, '');
+            }
+                if (target.matches('input[name="user_email"]')) {
+                target.value = target.value.replace(/^[а-я]$/, '');
+            }
         });
 
         const postData = (body, outputData, errorData) => {
