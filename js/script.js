@@ -386,15 +386,43 @@ window.addEventListener('DOMContentLoaded', () => {
         statusMessage.style.cssText = 'font-size: 2rem;';
         statusMessage.style.color = '#fff';
 
-        document.querySelectorAll('input[name="user_email"]').forEach((item) => {
-            item.required = true;
-        })
+        const inputError = (elem) => {
+            elem.style.border = '3px solid red';
+                setTimeout(() => {
+                    elem.style.border = 'none';
+                }, 3000);
+        };
 
         document.addEventListener('submit', event => {
             event.preventDefault();
             let target = event.target;
 
+            const inputName = target.querySelector('input[name="user_name"]'),
+                inputMessage = target.querySelector('input[name="user_message"]'),
+                inputPhone = target.querySelector('input[name="user_phone"]'),
+                inputEmail = target.querySelector('input[name="user_email"]');
+
+
             if (target.matches('form')) {
+
+                if (!inputName.value.match(/^[а-яА-Я]+$/)) {
+                    inputError(inputName);
+                    return;
+                }
+                if(inputMessage) {
+                    if (!inputMessage.value.match(/(^$)|(^[?!,.а-яА-Я0-9\s])+$/)) {
+                        inputError(inputMessage);
+                        return;
+                    }
+                }
+                if (!inputPhone.value.match(/^\+?[78]([-() ]*\d){10}$|^([-() ]*\d){7}$/)) {
+                    inputError(inputPhone);
+                    return;
+                }
+                if (!inputEmail.value.match(/^\w+@\w+\.\w{2,}$/)) {
+                    inputError(inputEmail);
+                    return;
+                }
 
                 target.appendChild(statusMessage);
                 statusMessage.innerHTML = `<img src="./images/loading.svg">`;
@@ -402,6 +430,9 @@ window.addEventListener('DOMContentLoaded', () => {
                 const formData = new FormData(target);
                 const body = {};
 
+                target.querySelectorAll('input').forEach((elem) => {
+                    elem.style.border = 'none';
+                })
                 target.reset();
 
                 formData.forEach((val, key) => {
@@ -417,6 +448,32 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        document.addEventListener('change', event => {
+            let target = event.target;
+
+            if (target.matches('input[name="user_name"]')) {
+                 if(target.value.match(/^[а-яА-Я]{3,}$/)) {
+                    target.style.border = '3px solid green';
+                } else {
+                    target.style.border = 'none';
+                } 
+            }
+            if (target.matches('input[name="user_phone"]')) {
+                if(target.value.match(/^\+?[78]([-() ]*\d){10}$|^([-() ]*\d){7}$/)) {
+                    target.style.border = '3px solid green';
+                } else {
+                    target.style.border = 'none';
+                }   
+            }
+            if (target.matches('input[name="user_email"]')) {
+                 if(target.value.match(/^\w+@\w+\.\w{2,}$/)) {
+                    target.style.border = '3px solid green';
+                } else {
+                    target.style.border = 'none';
+                } 
+            }
+        });
+
         document.addEventListener('input', event => {
             let target = event.target;
 
@@ -429,7 +486,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if (target.matches('input[name="user_phone"]')) {
                 target.value = target.value.replace(/[^+0-9]$/, '');
             }
-                if (target.matches('input[name="user_email"]')) {
+            if (target.matches('input[name="user_email"]')) {
                 target.value = target.value.replace(/^[а-я]$/, '');
             }
         });
@@ -447,6 +504,10 @@ window.addEventListener('DOMContentLoaded', () => {
                 } else {
                     errorData(request.status);
                 }
+                setTimeout(() => {
+                    statusMessage.remove();
+                    document.querySelector('.popup').style.display = 'none';
+                }, 2000);
             });
 
             request.open('POST', './server.php');
