@@ -378,10 +378,7 @@ window.addEventListener('DOMContentLoaded', () => {
     calc();
 
     //send-ajax=form
-    const sendForm = () => {
-        const errorMessage = 'Что-то пошло не так...',
-            successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
-        
+    const sendForm = () => {  
         const statusMessage = document.createElement('div');
         statusMessage.style.cssText = 'font-size: 2rem;';
         statusMessage.style.color = '#fff';
@@ -439,12 +436,9 @@ window.addEventListener('DOMContentLoaded', () => {
                     body[key] = val;
                 });
 
-                postData(body, () => {
-                    statusMessage.textContent = successMessage;
-                }, error => {
-                    statusMessage.textContent = errorMessage;
-                    console.error(error);
-                });
+                postData(body)
+                  .then(statusMessage)
+                  .catch(statusMessage);
             }
         });
 
@@ -481,41 +475,42 @@ window.addEventListener('DOMContentLoaded', () => {
                 target.value = target.value.replace(/[^а-я ]$/msi, '');
             }
             if (target.matches('input[name="user_message"]')) {
-                target.value = target.value.replace(/^[a-z]$/msi, '');
+                target.value = target.value.replace(/[^а-я0-9\@\-\.!?,_ ]$/msi, '');
             }
             if (target.matches('input[name="user_phone"]')) {
-                target.value = target.value.replace(/[^+0-9]$/, '');
+                target.value = target.value.replace(/[^+\-\)\(0-9 ]$/, '');
             }
             if (target.matches('input[name="user_email"]')) {
-                target.value = target.value.replace(/^[а-я]$/, '');
+                target.value = target.value.replace(/[^a-z0-9@.-_]$/msi, '');
             }
         });
 
-        const postData = (body, outputData, errorData) => {
-            const request = new XMLHttpRequest();
+        const postData = (body) => {
+            return new Promise((resolve, reject) => {
+                 const request = new XMLHttpRequest();
 
-            request.addEventListener('readystatechange', () => {
+                request.addEventListener('readystatechange', () => {
 
-                if (request.readyState !== 4) {
-                    return;
-                }
-                if (request.status === 200) {
-                    outputData();
-                } else {
-                    errorData(request.status);
-                }
-                setTimeout(() => {
-                    statusMessage.remove();
-                    document.querySelector('.popup').style.display = 'none';
-                }, 2000);
+                    if (request.readyState !== 4) {
+                        return;
+                    }
+                    if (request.status === 200) {
+                        resolve(statusMessage.textContent = 'Спасибо! Мы скоро с вами свяжемся!');
+                    } else {
+                        reject(statusMessage.textContent = 'Что-то пошло не так...');
+                    }
+                    setTimeout(() => {
+                        statusMessage.remove();
+                        document.querySelector('.popup').style.display = 'none';
+                    }, 3000);
+                });
+
+                request.open('POST', './server.php');
+                request.setRequestHeader('Content-Type', 'multipart/aplication/json');
+
+                request.send(JSON.stringify(body));
             });
-
-            request.open('POST', './server.php');
-            request.setRequestHeader('Content-Type', 'multipart/aplication/json');
-
-            request.send(JSON.stringify(body));
         };
-
     };
 
     sendForm();
