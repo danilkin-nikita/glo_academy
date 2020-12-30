@@ -399,25 +399,35 @@ window.addEventListener('DOMContentLoaded', () => {
                 inputPhone = target.querySelector('input[name="user_phone"]'),
                 inputEmail = target.querySelector('input[name="user_email"]');
 
+            const validName = /^[а-яА-Я]+$/,
+                validMessage = /(^$)|^[?\!,.\-\а-яА-Я\d\s]+$/,
+                validPhone = /^\+?[78]([-() ]*\d){10}$|^([-() ]*\d){7}$/,
+                validEmai = /^\w+@\w+\.\w{2,}$/;
+
+            let valid = true;
 
             if (target.matches('form')) {
 
-                if (!inputName.value.match(/^[а-яА-Я]+$/)) {
+                if (!inputName.value.match(validName)) {
                     inputError(inputName);
-                    return;
+                    valid = false;
                 }
                 if(inputMessage) {
-                    if (!inputMessage.value.match(/(^$)|(^[?!,.а-яА-Я0-9\s])+$/)) {
+                    if (!inputMessage.value.match(validMessage)) {
                         inputError(inputMessage);
-                        return;
+                        valid = false;
                     }
                 }
-                if (!inputPhone.value.match(/^\+?[78]([-() ]*\d){10}$|^([-() ]*\d){7}$/)) {
+                if (!inputPhone.value.match(validPhone)) {
                     inputError(inputPhone);
-                    return;
+                    valid = false;
                 }
-                if (!inputEmail.value.match(/^\w+@\w+\.\w{2,}$/)) {
+                if (!inputEmail.value.match(validEmai)) {
                     inputError(inputEmail);
+                    valid = false;
+                }
+
+                if (valid === false) {
                     return;
                 }
 
@@ -468,22 +478,22 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        document.addEventListener('input', event => {
-            let target = event.target;
+        // document.addEventListener('input', event => {
+        //     let target = event.target;
 
-            if (target.matches('input[name="user_name"]')) {
-                target.value = target.value.replace(/[^а-я ]$/msi, '');
-            }
-            if (target.matches('input[name="user_message"]')) {
-                target.value = target.value.replace(/[^а-я0-9\@\-\.!?,_ ]$/msi, '');
-            }
-            if (target.matches('input[name="user_phone"]')) {
-                target.value = target.value.replace(/[^+\-\)\(0-9 ]$/, '');
-            }
-            if (target.matches('input[name="user_email"]')) {
-                target.value = target.value.replace(/[^a-z0-9@.-_]$/msi, '');
-            }
-        });
+        //     if (target.matches('input[name="user_name"]')) {
+        //         target.value = target.value.replace(/[^а-я ]$/msi, '');
+        //     }
+        //     if (target.matches('input[name="user_message"]')) {
+        //         target.value = target.value.replace(/[^а-я0-9\@\-\.!?,_ ]$/msi, '');
+        //     }
+        //     if (target.matches('input[name="user_phone"]')) {
+        //         target.value = target.value.replace(/[^+\-\)\(0-9 ]$/, '');
+        //     }
+        //     if (target.matches('input[name="user_email"]')) {
+        //         target.value = target.value.replace(/[^a-z0-9@.-_]$/msi, '');
+        //     }
+        // });
 
         const postData = (body) => {
             return new Promise((resolve, reject) => {
