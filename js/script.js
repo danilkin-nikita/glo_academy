@@ -58,7 +58,7 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     // анимация счетчика
-    const counterAnimation = (num, elem, interval) => {
+    const counterAnimation = (num, elem) => {
         let time = 10;
 
         let step = 100,
@@ -74,7 +74,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const speed = Math.round(time / (num / step));
 
-        interval = setInterval(() => {
+        let interval = setInterval(() => {
             if (count < num) {
                 count += step;
                 elem.textContent = count;
@@ -335,8 +335,8 @@ window.addEventListener('DOMContentLoaded', () => {
         const countSum = () => {
             let total = 0,
                 countValue = 1,
-                dayValue = 1,
-                start;
+                dayValue = 1;
+        
             const typeValue = calcType.options[calcType.selectedIndex].value,
                 squareValue = +calcSquare.value;
 
@@ -354,7 +354,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 total = price * typeValue * squareValue * countValue * dayValue;
             }
 
-            counterAnimation(total, totalValue, start);
+            counterAnimation(total, totalValue);
         };
 
         calcBlock.addEventListener('change', event => {
@@ -378,21 +378,21 @@ window.addEventListener('DOMContentLoaded', () => {
     calc();
 
     //send-ajax=form
-    const sendForm = () => {  
+    const sendForm = () => {
         const statusMessage = document.createElement('div');
         statusMessage.style.cssText = 'font-size: 2rem;';
         statusMessage.style.color = '#fff';
 
-        const inputError = (elem) => {
+        const inputError = elem => {
             elem.style.border = '3px solid red';
-                setTimeout(() => {
-                    elem.style.border = 'none';
-                }, 3000);
+            setTimeout(() => {
+                elem.style.border = 'none';
+            }, 1500);
         };
 
         document.addEventListener('submit', event => {
             event.preventDefault();
-            let target = event.target;
+            const target = event.target;
 
             const inputName = target.querySelector('input[name="user_name"]'),
                 inputMessage = target.querySelector('input[name="user_message"]'),
@@ -412,7 +412,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     inputError(inputName);
                     valid = false;
                 }
-                if(inputMessage) {
+                if (inputMessage) {
                     if (!inputMessage.value.match(validMessage)) {
                         inputError(inputMessage);
                         valid = false;
@@ -435,51 +435,62 @@ window.addEventListener('DOMContentLoaded', () => {
                 statusMessage.innerHTML = `<img src="./images/loading.svg">`;
 
                 const formData = new FormData(target);
-                const body = {};
 
-                target.querySelectorAll('input').forEach((elem) => {
+                target.querySelectorAll('input').forEach(elem => {
                     elem.style.border = 'none';
-                })
+                });
                 target.reset();
 
-                formData.forEach((val, key) => {
-                    body[key] = val;
-                });
-
-                postData(body)
-                  .then(statusMessage)
-                  .catch(statusMessage);
+                postData(formData)
+                    .then(response => {
+                        if (response.status !== 200) {
+                            throw new Error('status network not 200');
+                        }
+                        statusMessage.textContent = 'Спасибо! Мы скоро с вами свяжемся!';
+                    })
+                    .catch(error => {
+                        statusMessage.textContent = 'Что-то пошло не так...';
+                        console.error(error);
+                    });
             }
         });
 
+        const postData = formData => fetch('./server.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'multipart/aplication/json'
+            },
+            body: formData
+        });
+
         document.addEventListener('change', event => {
-            let target = event.target;
+            const target = event.target;
 
             if (target.matches('input[name="user_name"]')) {
-                 if(target.value.match(/^[а-яА-Я]{3,}$/)) {
+                if (target.value.match(/^[а-яА-Я]{3,}$/)) {
                     target.style.border = '3px solid green';
                 } else {
                     target.style.border = 'none';
-                } 
+                }
             }
             if (target.matches('input[name="user_phone"]')) {
-                if(target.value.match(/^\+?[78]([-() ]*\d){10}$|^([-() ]*\d){7}$/)) {
+                if (target.value.match(/^\+?[78]([-() ]*\d){10}$|^([-() ]*\d){7}$/)) {
                     target.style.border = '3px solid green';
                 } else {
                     target.style.border = 'none';
-                }   
+                }
             }
             if (target.matches('input[name="user_email"]')) {
-                 if(target.value.match(/^\w+@\w+\.\w{2,}$/)) {
+                if (target.value.match(/^\w+@\w+\.\w{2,}$/)) {
                     target.style.border = '3px solid green';
                 } else {
                     target.style.border = 'none';
-                } 
+                }
             }
         });
 
         document.addEventListener('input', event => {
-            let target = event.target;
+            const target = event.target;
 
             if (target.matches('input[name="user_name"]')) {
                 target.value = target.value.replace(/[^а-я ]$/msi, '');
@@ -494,33 +505,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 target.value = target.value.replace(/[^a-z0-9@.-_]$/msi, '');
             }
         });
-
-        const postData = (body) => {
-            return new Promise((resolve, reject) => {
-                 const request = new XMLHttpRequest();
-
-                request.addEventListener('readystatechange', () => {
-
-                    if (request.readyState !== 4) {
-                        return;
-                    }
-                    if (request.status === 200) {
-                        resolve(statusMessage.textContent = 'Спасибо! Мы скоро с вами свяжемся!');
-                    } else {
-                        reject(statusMessage.textContent = 'Что-то пошло не так...');
-                    }
-                    setTimeout(() => {
-                        statusMessage.remove();
-                        document.querySelector('.popup').style.display = 'none';
-                    }, 3000);
-                });
-
-                request.open('POST', './server.php');
-                request.setRequestHeader('Content-Type', 'multipart/aplication/json');
-
-                request.send(JSON.stringify(body));
-            });
-        };
     };
 
     sendForm();
