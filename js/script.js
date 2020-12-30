@@ -478,22 +478,22 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // document.addEventListener('input', event => {
-        //     let target = event.target;
+        document.addEventListener('input', event => {
+            let target = event.target;
 
-        //     if (target.matches('input[name="user_name"]')) {
-        //         target.value = target.value.replace(/[^а-я ]$/msi, '');
-        //     }
-        //     if (target.matches('input[name="user_message"]')) {
-        //         target.value = target.value.replace(/[^а-я0-9\@\-\.!?,_ ]$/msi, '');
-        //     }
-        //     if (target.matches('input[name="user_phone"]')) {
-        //         target.value = target.value.replace(/[^+\-\)\(0-9 ]$/, '');
-        //     }
-        //     if (target.matches('input[name="user_email"]')) {
-        //         target.value = target.value.replace(/[^a-z0-9@.-_]$/msi, '');
-        //     }
-        // });
+            if (target.matches('input[name="user_name"]')) {
+                target.value = target.value.replace(/[^а-я ]$/msi, '');
+            }
+            if (target.matches('input[name="user_message"]')) {
+                target.value = target.value.replace(/[^а-я0-9\@\-\.!?,_ ]$/msi, '');
+            }
+            if (target.matches('input[name="user_phone"]')) {
+                target.value = target.value.replace(/[^+\-\)\(0-9 ]$/, '');
+            }
+            if (target.matches('input[name="user_email"]')) {
+                target.value = target.value.replace(/[^a-z0-9@.-_]$/msi, '');
+            }
+        });
 
         const postData = (body) => {
             return new Promise((resolve, reject) => {
