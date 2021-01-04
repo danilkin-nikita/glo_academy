@@ -97,7 +97,7 @@
             const target = event.target;
 
             if (target.matches('input[name="user_name"]')) {
-                if (target.value.match(/^[а-яА-Я]{3,}$/)) {
+                if (target.value.match(/^[а-яА-Я ]{2,}$/)) {
                     target.style.border = '3px solid green';
                 } else {
                     target.style.border = 'none';
@@ -111,7 +111,7 @@
                 }
             }
             if (target.matches('input[name="user_email"]')) {
-                if (target.value.match(/^\w+@\w+\.\w{2,}$/)) {
+                if (target.value.match(/^[a-z0-9.-_]+@[a-z]+\.[a-z]{2,}$/)) {
                     target.style.border = '3px solid green';
                 } else {
                     target.style.border = 'none';
@@ -123,16 +123,16 @@
             const target = event.target;
 
             if (target.matches('input[name="user_name"]')) {
-                target.value = target.value.replace(/[^а-я ]$/msi, '');
+                target.value = target.value.replace(/[^а-яА-Я ]$/, '');
             }
             if (target.matches('input[name="user_message"]')) {
-                target.value = target.value.replace(/[^а-я0-9\@\-\.!?,_ ]$/msi, '');
+                target.value = target.value.replace(/[^а-яА-Я0-9\@\-\.!?,_ ]$/, '');
             }
             if (target.matches('input[name="user_phone"]')) {
                 target.value = target.value.replace(/[^+\-\)\(0-9 ]$/, '');
             }
             if (target.matches('input[name="user_email"]')) {
-                target.value = target.value.replace(/[^a-z0-9@.-_]$/msi, '');
+                target.value = target.value.replace(/[^a-z0-9@.-_]$/, '');
             }
         });
     };

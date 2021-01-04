@@ -1,6 +1,6 @@
  const tabs = () => {
         const tabHeader = document.querySelector('.service-header'),
-            tab = tabHeader.querySelectorAll('.service-header-tab'),
+            tab = [...tabHeader.querySelectorAll('.service-header-tab')],
             tabContent = document.querySelectorAll('.service-tab');
 
         const toggleTabContent = index => {
@@ -18,14 +18,7 @@
         tabHeader.addEventListener('click', event => {
             let target = event.target;
             target = target.closest('.service-header-tab');
-
-            if (target) {
-                tab.forEach((item, i) => {
-                    if (item === target) {
-                        toggleTabContent(i);
-                    }
-                });
-            }
+            toggleTabContent(tab.indexOf(target));
         });
     };
 

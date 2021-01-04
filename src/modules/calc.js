@@ -27,33 +27,36 @@ const calc = (price = 100) => {
             if (typeValue && squareValue) {
                 total = price * typeValue * squareValue * countValue * dayValue;
             }
-
+            
             counterAnimation(total, totalValue);
         };
 
-          const counterAnimation = (num, elem) => {
-        let time = 10;
+        const counterAnimation = (num, elem) => {
+            
+            let time = 10,
+                step = 100,
+                count = 0;
 
-        let step = 100,
-            count = 0;
-
-        if (num > 10000 && num <= 30000) {
-            time = 20;
-        } else if (num > 30000 && num <= 100000) {
-            time = 60;
-        } else if (num > 100000) {
-            time = 100;
-        }
-
-        const speed = Math.round(time / (num / step));
-
-        let interval = setInterval(() => {
-            if (count < num) {
-                count += step;
-                elem.textContent = count;
+            if (num > 10000 && num <= 30000) {
+                time = 5;
+            } else if (num > 30000 && num <= 100000) {
+                time = 2;
+            } else if (num > 100000) {
+                time = 1;
             }
-        }, speed);
 
+            setInterval(() => {
+                if (count < num) {
+                    count += step;
+                }
+            }, time);
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                elem.textContent = count;
+            };
+            
+            requestAnimationFrame(animate);
     };
 
         calcBlock.addEventListener('change', event => {
