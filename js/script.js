@@ -19,7 +19,6 @@ class Todo {
         this.input.value = '';
         this.todoData.forEach(this.createElem, this);
         this.addToStorage();
-        this.handler();
     }
 
     createElem(todo) {
@@ -28,12 +27,12 @@ class Todo {
         li.key = todo.key;
         li.insertAdjacentHTML('beforeend', `
             	<span class="text-todo">${todo.value}</span>
-				      <div class="todo-buttons">
+                      <div class="todo-buttons">
+                          <button class="todo-edit"></button>
 				    	  <button class="todo-remove"></button>
 				    	  <button class="todo-complete"></button>
               </div>
     `);
-
         if (todo.completed) {
             this.todoCompleted.append(li);
         } else {
@@ -61,13 +60,14 @@ class Todo {
     generateKey() {
         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
-
+    
     deleteElem(elem) {
 
         this.todoData.forEach((item, i) => {
 
             if (item.key === elem.key) {
-                this.todoData.delete(i);
+
+                    this.todoData.delete(i);
             }
         });
 
@@ -79,6 +79,7 @@ class Todo {
         this.todoData.forEach(item => {
 
             if (item.key === elem.key) {
+
                 item.completed = !item.completed;
             }
         });
@@ -87,26 +88,60 @@ class Todo {
 
     }
 
-    handler() {
-        const li = document.querySelectorAll('li');
-        for (let i = 0; i < li.length; i++) {
-            li[i].addEventListener('click', event => {
-                const target = event.target;
+    editElem(elem) {
+        if (!elem.hasAttribute('contenteditable')) {
+            elem.setAttribute('contenteditable', true);
+            elem.focus();
+        } else {
+            elem.removeAttribute('contenteditable');
 
-                if (target.matches('.todo-remove')) {
-                    this.deleteElem(li[i]);
-                } else if (target.matches('.todo-complete')) {
-                    this.completedElem(li[i]);
+            this.todoData.forEach(item => {
+
+                if (item.key === elem.closest('.todo-item').key) {
+                   
+                   item.value = elem.textContent;
+                   this.addToStorage();
                 }
             });
         }
     }
 
+    animateElem(elem) {
+        const animate = () => {
+            requestAnimationFrame(animate);
+            elem.style.transition = '1s all';
+            elem.style.transform = 'translateX(110%)';
+        };
+        animate();
+    }
+
+    handler() {
+        document.addEventListener('click', event => {
+            const target = event.target;
+
+            if (target.matches('.todo-complete')) {
+                this.animateElem(target.closest('.todo-item'));
+                setTimeout(() => {
+                 this.completedElem(target.closest('.todo-item')); 
+               }, 1000);
+            }
+            if (target.matches('.todo-remove')) {
+                this.animateElem(target.closest('.todo-item'));
+               setTimeout(() => {
+                 this.deleteElem(target.closest('.todo-item')); 
+               }, 1000); 
+            }
+            if (target.matches('.todo-edit')) {
+                this.editElem(target.closest('.todo-item').querySelector('.text-todo'));
+            }
+        });
+    }
+
     init() {
 
-        this.form.addEventListener('submit', this.addTodo.bind(this));
+        this.form.addEventListener('submit', this.addTodo.bind(this)); 
+        this.handler();
         this.render();
-
     }
 }
 
